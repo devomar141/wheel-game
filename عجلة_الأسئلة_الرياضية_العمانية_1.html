@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>عجلة الأسئلة الرياضية العمانية</title>
+<style>
+:root{--bg:#0f1226;--card:#1b1f3b;--tx:#fff;--mut:#a9aed6;--ac:#ffd166;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f3f1ff;--card:#fff;--tx:#1d1b3a;--mut:#6a6890;--ac:#ff7a59;color-scheme:light}}
+:root[data-theme="dark"]{--bg:#0f1226;--card:#1b1f3b;--tx:#fff;--mut:#a9aed6;--ac:#ffd166}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Segoe UI",Tahoma,system-ui,sans-serif;text-align:center;min-height:100vh}
+h1{font-size:22px;margin:16px 0 4px}
+.sub{color:var(--mut);font-size:14px;margin-bottom:8px}
+.stage{position:relative;width:min(92vw,420px);margin:8px auto}
+canvas{width:100%;height:auto;display:block;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
+.ptr{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:32px solid var(--ac);filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));z-index:2}
+button{font:inherit;border:0;border-radius:14px;padding:12px 22px;background:var(--ac);color:#1d1b3a;font-weight:700;font-size:17px;cursor:pointer}
+button.sec{background:var(--card);color:var(--tx);font-weight:500;font-size:14px;padding:9px 14px}
+.row{display:flex;gap:10px;justify-content:center;margin:12px;flex-wrap:wrap}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:5}
+#modal.on{display:flex}
+.box{background:var(--card);border-radius:20px;padding:24px;max-width:440px;width:100%}
+.num{width:54px;height:54px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#1d1b3a}
+#q{font-size:21px;line-height:1.7;margin:8px 0 16px}
+#a{font-size:18px;color:var(--ac);margin-bottom:14px;display:none}
+#edit{display:none;max-width:480px;margin:0 auto;padding:0 16px 24px}
+textarea{width:100%;height:200px;border-radius:12px;border:1px solid var(--mut);background:var(--card);color:var(--tx);font:inherit;padding:10px;direction:rtl}
+.hint{font-size:13px;color:var(--mut);margin:6px 0}
+.opt{display:block;width:100%;margin:8px 0;padding:13px 16px;background:var(--bg);color:var(--tx);border:2px solid var(--mut);border-radius:14px;font:inherit;font-size:17px;font-weight:500;cursor:pointer}
+.opt.good{background:#06d6a0;color:#073b2e;border-color:#06d6a0}
+.opt.bad{background:#ff6b6b;color:#fff;border-color:#ff6b6b}
+#res{font-size:19px;font-weight:700;margin:10px 0;min-height:26px}
+.pill{background:var(--card);padding:9px 16px;border-radius:14px;font-weight:700}
+#mb{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;left:auto;z-index:6;width:44px;height:44px;padding:0;border-radius:12px;background:var(--card);color:var(--tx);font-size:22px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+#menu{position:fixed;top:calc(env(safe-area-inset-top,0px) + 60px);right:12px;z-index:6;background:var(--card);border-radius:14px;padding:6px;display:none;box-shadow:0 6px 20px rgba(0,0,0,.4);min-width:170px}
+#menu.on{display:block}
+#menu button{display:block;width:100%;background:none;color:var(--tx);font-weight:500;font-size:16px;text-align:right;padding:12px 14px}
+#ep{position:fixed;inset:0;background:var(--bg);overflow-y:auto;display:none;z-index:8;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 30px}
+#ep.on{display:block}
+.ebox{max-width:520px;margin:0 auto;text-align:right}
+.etop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:18px}
+.qc{background:var(--card);border-radius:16px;padding:12px;margin-bottom:12px}
+.qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.qc textarea{height:auto;width:100%;margin-bottom:8px;font-size:16px}
+.orow{display:flex;gap:8px;align-items:center;margin:6px 0}
+.orow input[type=text]{flex:1;padding:10px;border-radius:10px;border:1px solid var(--mut);background:var(--bg);color:var(--tx);font:inherit;font-size:16px}
+.orow input[type=radio]{width:22px;height:22px;accent-color:#06d6a0}
+</style>
+</head>
+<body>
+<h1>🎡 عجلة الأسئلة الرياضية</h1>
+<div class="sub">لفّ العجلة وجاوب على السؤال اللي يطلع لك</div>
+<div class="stage"><div class="ptr"></div><canvas id="c" width="840" height="840"></canvas></div>
+<div class="row"><button id="spin">لفّ!</button></div>
+<button id="mb" aria-label="القائمة">☰</button>
+<div id="menu"><button id="me">✏️ تعديل الأسئلة</button><button id="mr">↺ إعادة اللعب</button></div>
+<div id="ep"><div class="ebox">
+  <div class="etop"><b>تعديل الأسئلة</b><button class="sec" id="cl">✕ إغلاق</button></div>
+  <div id="el"></div>
+  <div class="row"><button class="sec" id="add">＋ إضافة سؤال</button><button id="sv">حفظ</button></div>
+</div></div>
+<div id="modal"><div class="box">
+  <div class="num" id="n"></div>
+  <div id="q"></div>
+  <div id="opts"></div>
+  <div id="res"></div>
+  <div class="row"><button id="ok">التالي ◀</button></div>
+</div></div>
+<script>
+const COL=["#ff6b6b","#ffd166","#06d6a0","#4cc9f0","#b388ff","#ff9f68","#f72585","#7bd88f"];
+const Q=[
+ ["أي من الأندية التالية يُعد من أقدم الأندية الرياضية في سلطنة عمان؟",["نادي عمان","نادي المصنعة","نادي الطليعة","نادي ظفار"],0],
+ ["أي بطولة توّج بها المنتخب العماني لكرة القدم على أرضه في مسقط عام 2009؟",["كأس آسيا","كأس الخليج العربي","كأس العرب","كأس القارات"],1],
+ ["في أي عام تأسس الاتحاد العماني لكرة القدم؟",["1970","1978","1985","1990"],1],
+ ["ما الرياضة التي تُلقب بـ «أم الألعاب»؟",["ألعاب القوى","كرة السلة","الغولف","السباحة"],0],
+ ["أي من الأندية التالية نادٍ عماني؟",["ظفار","الهلال","العين","الزمالك"],0],
+ ["أي مما يلي من فوائد ممارسة التمارين الرياضية يومياً؟",["تقوية القلب والعضلات","زيادة الخمول","ضعف المناعة","قلة النشاط"],0],
+ ["رياضة تُلعب بكرة صغيرة ومضرب خفيف فوق طاولة تفصلها شبكة، ما هي؟",["كرة الطاولة","التنس الأرضي","الاسكواش","الهوكي"],0],
+ ["رياضة بحرية تراثية عريقة مرتبطة بتاريخ العمانيين وسفنهم، ما هي؟",["الجولف","سباقات القوارب التقليدية","التزلج على الجليد","البولينغ"],1],
+ ["من هو الحارس العماني الشهير الذي احترف في الدوري الإنجليزي الممتاز؟",["علي الحبسي","عماد الحوسني","محمد صلاح","حسين الشحات"],0],
+ ["رياضة قتالية كورية الأصل تعتمد أساساً على الركلات، ما هي؟",["الملاكمة","الجودو","التايكوندو","المصارعة"],2]
+];
+let items=Q.map((x,i)=>({id:i+1,q:x[0],o:x[1],c:x[2],used:false}));
+const cv=document.getElementById("c"),g=cv.getContext("2d");
+let rot=0,busy=false,cur=null;
+const live=()=>items.filter(x=>!x.used);
+function draw(){
+  const L=live(),n=L.length,R=cv.width/2;
+  g.clearRect(0,0,cv.width,cv.height);
+  g.save();g.translate(R,R);g.rotate(rot);
+  if(!n){g.restore();g.fillStyle="#888";g.font="bold 44px sans-serif";g.textAlign="center";g.fillText("خلصت الأسئلة 🎉",R,R);return}
+  const a=2*Math.PI/n;
+  L.forEach((x,i)=>{
+    g.beginPath();g.moveTo(0,0);g.arc(0,0,R-8,i*a-Math.PI/2-a/2,(i+1)*a-Math.PI/2-a/2);g.closePath();
+    g.fillStyle=COL[(x.id-1)%COL.length];g.fill();g.strokeStyle="rgba(255,255,255,.85)";g.lineWidth=4;g.stroke();
+    g.save();g.rotate(i*a);g.translate(0,-R*0.72);
+    g.fillStyle="#1d1b3a";g.font="bold "+(n>14?34:52)+"px sans-serif";g.textAlign="center";g.textBaseline="middle";
+    g.fillText("?",0,0);g.restore();
+  });
+  g.beginPath();g.arc(0,0,46,0,7);g.fillStyle="#1d1b3a";g.fill();g.strokeStyle="#fff";g.lineWidth=6;g.stroke();
+  g.restore();
+}
+function spin(){
+  const L=live();if(busy||!L.length)return;busy=true;
+  const n=L.length,a=2*Math.PI/n,k=Math.floor(Math.random()*n);
+  const target=-(k*a)+(Math.random()-.5)*a*.7;
+  const start=rot,mod=x=>((x%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+  const end=start+(Math.PI*2*(5+Math.floor(Math.random()*3)))+mod(target-start);
+  const t0=performance.now(),D=4500;
+  (function f(t){
+    const p=Math.min(1,(t-t0)/D),e=1-Math.pow(1-p,4);
+    rot=start+(end-start)*e;draw();
+    if(p<1)requestAnimationFrame(f);else{busy=false;show(L[k])}
+  })(t0);
+}
+function show(x){
+  cur=x;const nb=document.getElementById("n");
+  nb.textContent=x.id;nb.style.background=COL[(x.id-1)%COL.length];
+  document.getElementById("q").textContent=x.q;
+  const box=document.getElementById("opts");box.innerHTML="";
+  const ord=x.o.map((t,i)=>i);
+  for(let i=ord.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ord[i],ord[j]]=[ord[j],ord[i]]}
+  ord.forEach(i=>{
+    const b=document.createElement("button");b.className="opt";b.textContent=x.o[i];
+    b.onclick=()=>pick(b,i===x.c,box);b.dataset.ok=i===x.c?"1":"";
+    box.appendChild(b);
+  });
+  document.getElementById("res").textContent="";
+  document.getElementById("ok").style.display="none";
+  document.getElementById("modal").classList.add("on");
+}
+function pick(b,right,box){
+  [...box.children].forEach(e=>{e.disabled=true;if(e.dataset.ok)e.classList.add("good")});
+  if(right){document.getElementById("res").textContent="إجابة صحيحة! 🎉"}
+  else{b.classList.add("bad");document.getElementById("res").textContent="إجابة خاطئة 😅"}
+  document.getElementById("ok").style.display="";
+}
+document.getElementById("ok").onclick=()=>{
+  cur.used=true;document.getElementById("modal").classList.remove("on");draw();
+  if(!live().length)setTimeout(()=>alert("انتهت الأسئلة! 🎉"),300);
+};
+document.getElementById("spin").onclick=spin;
+cv.onclick=spin;
+function reset(){items.forEach(x=>x.used=false);draw()}
+const menu=document.getElementById("menu"),mb=document.getElementById("mb");
+mb.onclick=e=>{e.stopPropagation();menu.classList.toggle("on")};
+document.addEventListener("click",()=>menu.classList.remove("on"));
+document.getElementById("mr").onclick=()=>{reset();menu.classList.remove("on")};
+const ep=document.getElementById("ep"),el=document.getElementById("el");
+let draft=[];
+function renderEd(){
+  el.innerHTML="";
+  draft.forEach((d,i)=>{
+    const c=document.createElement("div");c.className="qc";
+    c.innerHTML='<div class="qh"><b>سؤال '+(i+1)+'</b><button class="sec del">🗑 حذف</button></div>';
+    c.querySelector(".del").onclick=()=>{draft.splice(i,1);renderEd()};
+    const qi=document.createElement("textarea");qi.value=d.q;qi.rows=2;qi.placeholder="نص السؤال";
+    qi.oninput=()=>d.q=qi.value;c.appendChild(qi);
+    d.o.forEach((t,j)=>{
+      const r=document.createElement("div");r.className="orow";
+      const rd=document.createElement("input");rd.type="radio";rd.name="r"+i;rd.checked=d.c===j;rd.onchange=()=>d.c=j;
+      const ti=document.createElement("input");ti.type="text";ti.value=t;ti.placeholder="الخيار "+(j+1);ti.oninput=()=>d.o[j]=ti.value;
+      r.append(rd,ti);c.appendChild(r);
+    });
+    const h=document.createElement("div");h.className="hint";h.textContent="الدائرة المحددة = الإجابة الصحيحة";c.appendChild(h);
+    el.appendChild(c);
+  });
+}
+function openEd(){
+  draft=items.map(x=>({q:x.q,o:[...x.o],c:x.c}));renderEd();ep.classList.add("on");
+}
+document.getElementById("me").onclick=()=>{menu.classList.remove("on");openEd()};
+document.getElementById("add").onclick=()=>{draft.push({q:"",o:["","","",""],c:0});renderEd();el.lastChild.scrollIntoView({behavior:"smooth"})};
+document.getElementById("cl").onclick=()=>ep.classList.remove("on");
+document.getElementById("sv").onclick=()=>{
+  const ok=draft.filter(d=>d.q.trim()&&d.o.filter(t=>t.trim()).length>=2);
+  if(!ok.length){alert("أضف سؤالاً واحداً على الأقل مع خيارين");return}
+  items=ok.map((d,i)=>{
+    const o=[],ci=d.c;let nc=0;
+    d.o.forEach((t,j)=>{if(t.trim()){if(j===ci)nc=o.length;o.push(t.trim())}});
+    return{id:i+1,q:d.q.trim(),o,c:nc,used:false};
+  });
+  ep.classList.remove("on");draw();
+};
+draw();
+</script>
+</body>
+</html>
