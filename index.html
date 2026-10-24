@@ -68,6 +68,9 @@ textarea{width:100%;height:200px;border-radius:12px;border:1px solid var(--mut);
   <div class="row"><button id="ok">التالي ◀</button></div>
 </div></div>
 <script>
+// كلمة السر الخاصة بتعديل الأسئلة
+const ADMIN_PASSWORD = "1234";
+
 const COL=["#ff6b6b","#ffd166","#06d6a0","#4cc9f0","#b388ff","#ff9f68","#f72585","#7bd88f"];
 const Q=[
  ["أي من الأندية التالية يُعد من أقدم الأندية الرياضية في سلطنة عمان؟",["نادي عمان","نادي المصنعة","نادي الطليعة","نادي ظفار"],0],
@@ -168,7 +171,12 @@ function renderEd(){
   });
 }
 function openEd(){
-  draft=items.map(x=>({q:x.q,o:[...x.o],c:x.c}));renderEd();ep.classList.add("on");
+  const pwd = prompt("37103:");
+  if (pwd === ADMIN_PASSWORD) {
+    draft=items.map(x=>({q:x.q,o:[...x.o],c:x.c}));renderEd();ep.classList.add("on");
+  } else if (pwd !== null) {
+    alert("كلمة السر خاطئة!");
+  }
 }
 document.getElementById("me").onclick=()=>{menu.classList.remove("on");openEd()};
 document.getElementById("add").onclick=()=>{draft.push({q:"",o:["","","",""],c:0});renderEd();el.lastChild.scrollIntoView({behavior:"smooth"})};
