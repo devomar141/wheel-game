@@ -18,8 +18,8 @@ canvas{width:100%;height:auto;display:block;filter:drop-shadow(0 8px 20px rgba(0
 button{font:inherit;border:0;border-radius:14px;padding:12px 22px;background:var(--ac);color:#1d1b3a;font-weight:700;font-size:17px;cursor:pointer}
 button.sec{background:var(--card);color:var(--tx);font-weight:500;font-size:14px;padding:9px 14px}
 .row{display:flex;gap:10px;justify-content:center;margin:12px;flex-wrap:wrap}
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:5}
-#modal.on{display:flex}
+#modal, #pwdModal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:5}
+#modal.on, #pwdModal.on{display:flex}
 .box{background:var(--card);border-radius:20px;padding:24px;max-width:440px;width:100%}
 .num{width:54px;height:54px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#1d1b3a}
 #q{font-size:21px;line-height:1.7;margin:8px 0 16px}
@@ -46,6 +46,7 @@ textarea{width:100%;height:200px;border-radius:12px;border:1px solid var(--mut);
 .orow{display:flex;gap:8px;align-items:center;margin:6px 0}
 .orow input[type=text]{flex:1;padding:10px;border-radius:10px;border:1px solid var(--mut);background:var(--bg);color:var(--tx);font:inherit;font-size:16px}
 .orow input[type=radio]{width:22px;height:22px;accent-color:#06d6a0}
+.pwd-input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);background:var(--bg);color:var(--tx);font-size:18px;text-align:center;margin:12px 0}
 </style>
 </head>
 <body>
@@ -55,6 +56,19 @@ textarea{width:100%;height:200px;border-radius:12px;border:1px solid var(--mut);
 <div class="row"><button id="spin">لف!</button></div>
 <button id="mb" aria-label="القائمة">☰</button>
 <div id="menu"><button id="me">✏️ تعديل الأسئلة</button><button id="mr">↺ إعادة اللعب</button></div>
+
+<!-- نافذة أدخال كلمة السر لتعديل الأسئلة -->
+<div id="pwdModal">
+  <div class="box">
+    <h3 style="margin-top:0">🔒 أدخل كلمة السر</h3>
+    <input type="password" id="pwdInput" class="pwd-input" placeholder="••••" autocomplete="off">
+    <div class="row">
+      <button class="sec" id="pwdCancel">إلغاء</button>
+      <button id="pwdSubmit">دخول</button>
+    </div>
+  </div>
+</div>
+
 <div id="ep"><div class="ebox">
   <div class="etop"><b>تعديل الأسئلة</b><button class="sec" id="cl">✕ إغلاق</button></div>
   <div id="el"></div>
@@ -68,8 +82,8 @@ textarea{width:100%;height:200px;border-radius:12px;border:1px solid var(--mut);
   <div class="row"><button id="ok">التالي ◀</button></div>
 </div></div>
 <script>
-// كلمة السر الخاصة بتعديل الأسئلة
-const ADMIN_PASSWORD = "1234";
+// كلمة السر المعتمدة لتعديل الأسئلة
+const ADMIN_PASSWORD = "37103";
 
 const COL=["#ff6b6b","#ffd166","#06d6a0","#4cc9f0","#b388ff","#ff9f68","#f72585","#7bd88f"];
 const Q=[
@@ -170,15 +184,33 @@ function renderEd(){
     el.appendChild(c);
   });
 }
-function openEd(){
-  const pwd = prompt("37103:");
-  if (pwd === ADMIN_PASSWORD) {
-    draft=items.map(x=>({q:x.q,o:[...x.o],c:x.c}));renderEd();ep.classList.add("on");
-  } else if (pwd !== null) {
+
+// التحكم بنافذة كلمة السر
+const pwdModal = document.getElementById("pwdModal");
+const pwdInput = document.getElementById("pwdInput");
+
+document.getElementById("me").onclick=()=>{
+  menu.classList.remove("on");
+  pwdInput.value = "";
+  pwdModal.classList.add("on");
+  pwdInput.focus();
+};
+
+document.getElementById("pwdCancel").onclick=()=>{
+  pwdModal.classList.remove("on");
+};
+
+document.getElementById("pwdSubmit").onclick=()=>{
+  if(pwdInput.value === ADMIN_PASSWORD) {
+    pwdModal.classList.remove("on");
+    draft=items.map(x=>({q:x.q,o:[...x.o],c:x.c}));
+    renderEd();
+    ep.classList.add("on");
+  } else {
     alert("كلمة السر خاطئة!");
   }
-}
-document.getElementById("me").onclick=()=>{menu.classList.remove("on");openEd()};
+};
+
 document.getElementById("add").onclick=()=>{draft.push({q:"",o:["","","",""],c:0});renderEd();el.lastChild.scrollIntoView({behavior:"smooth"})};
 document.getElementById("cl").onclick=()=>ep.classList.remove("on");
 document.getElementById("sv").onclick=()=>{
