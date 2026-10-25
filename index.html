@@ -5,59 +5,105 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>عجلة الأسئلة الرياضية العمانية</title>
 <style>
-:root{--bg:#0f1226;--card:#1b1f3b;--tx:#fff;--mut:#a9aed6;--ac:#ffd166;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f3f1ff;--card:#fff;--tx:#1d1b3a;--mut:#6a6890;--ac:#ff7a59;color-scheme:light}}
-:root[data-theme="dark"]{--bg:#0f1226;--card:#1b1f3b;--tx:#fff;--mut:#a9aed6;--ac:#ffd166}
+:root{
+  --card:#1b1f3bcc;
+  --tx:#fff;
+  --mut:#a9aed6;
+  --ac:#ffd166;
+  color-scheme:dark;
+  box-sizing:border-box;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:"Segoe UI",Tahoma,system-ui,sans-serif;text-align:center;min-height:100vh}
-h1{font-size:22px;margin:16px 0 4px}
-.sub{color:var(--mut);font-size:14px;margin-bottom:8px}
-.stage{position:relative;width:min(92vw,420px);margin:8px auto}
-canvas{width:100%;height:auto;display:block;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
-.ptr{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:32px solid var(--ac);filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));z-index:2}
-button{font:inherit;border:0;border-radius:14px;padding:12px 22px;background:var(--ac);color:#1d1b3a;font-weight:700;font-size:17px;cursor:pointer}
-button.sec{background:var(--card);color:var(--tx);font-weight:500;font-size:14px;padding:9px 14px}
-.row{display:flex;gap:10px;justify-content:center;margin:12px;flex-wrap:wrap}
-#modal, #pwdModal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:5}
+body{
+  margin:0;
+  padding:0;
+  background:#0f1226 url('bg.jpg') center center / cover no-repeat fixed;
+  color:var(--tx);
+  font-family:"Segoe UI",Tahoma,system-ui,sans-serif;
+  text-align:center;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.stage{
+  position:relative;
+  width:min(85vw, 360px);
+  margin:140px auto 10px;
+}
+canvas{
+  width:100%;
+  height:auto;
+  display:block;
+  filter:drop-shadow(0 8px 25px rgba(0,0,0,.5));
+}
+.ptr{
+  position:absolute;
+  top:-12px;
+  left:50%;
+  transform:translateX(-50%);
+  width:0;
+  height:0;
+  border-left:14px solid transparent;
+  border-right:14px solid transparent;
+  border-top:28px solid var(--ac);
+  filter:drop-shadow(0 3px 5px rgba(0,0,0,.6));
+  z-index:2;
+}
+button{
+  font:inherit;
+  border:0;
+  border-radius:14px;
+  padding:12px 28px;
+  background:var(--ac);
+  color:#1d1b3a;
+  font-weight:700;
+  font-size:18px;
+  cursor:pointer;
+  box-shadow:0 4px 15px rgba(0,0,0,.3);
+  transition:transform .1s ease;
+}
+button:active{transform:scale(0.96)}
+button.sec{background:var(--card);color:var(--tx);font-weight:500;font-size:14px;padding:9px 14px;backdrop-filter:blur(8px)}
+.row{display:flex;gap:10px;justify-content:center;margin:10px 0 20px;flex-wrap:wrap}
+
+#modal, #pwdModal{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
 #modal.on, #pwdModal.on{display:flex}
-.box{background:var(--card);border-radius:20px;padding:24px;max-width:440px;width:100%}
+.box{background:rgba(27,31,59,.92);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:24px;max-width:440px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .num{width:54px;height:54px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#1d1b3a}
-#q{font-size:21px;line-height:1.7;margin:8px 0 16px}
-#a{font-size:18px;color:var(--ac);margin-bottom:14px;display:none}
-#edit{display:none;max-width:480px;margin:0 auto;padding:0 16px 24px}
-textarea{width:100%;height:200px;border-radius:12px;border:1px solid var(--mut);background:var(--card);color:var(--tx);font:inherit;padding:10px;direction:rtl}
-.hint{font-size:13px;color:var(--mut);margin:6px 0}
-.opt{display:block;width:100%;margin:8px 0;padding:13px 16px;background:var(--bg);color:var(--tx);border:2px solid var(--mut);border-radius:14px;font:inherit;font-size:17px;font-weight:500;cursor:pointer}
+#q{font-size:20px;line-height:1.6;margin:8px 0 16px}
+.opt{display:block;width:100%;margin:8px 0;padding:12px 16px;background:rgba(15,18,38,.8);color:var(--tx);border:2px solid var(--mut);border-radius:14px;font:inherit;font-size:16px;font-weight:500;cursor:pointer}
 .opt.good{background:#06d6a0;color:#073b2e;border-color:#06d6a0}
 .opt.bad{background:#ff6b6b;color:#fff;border-color:#ff6b6b}
 #res{font-size:19px;font-weight:700;margin:10px 0;min-height:26px}
-.pill{background:var(--card);padding:9px 16px;border-radius:14px;font-weight:700}
-#mb{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;left:auto;z-index:6;width:44px;height:44px;padding:0;border-radius:12px;background:var(--card);color:var(--tx);font-size:22px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-#menu{position:fixed;top:calc(env(safe-area-inset-top,0px) + 60px);right:12px;z-index:6;background:var(--card);border-radius:14px;padding:6px;display:none;box-shadow:0 6px 20px rgba(0,0,0,.4);min-width:170px}
+#mb{position:fixed;top:14px;right:14px;z-index:6;width:44px;height:44px;padding:0;border-radius:12px;background:rgba(27,31,59,.8);backdrop-filter:blur(8px);color:var(--tx);font-size:22px}
+#menu{position:fixed;top:64px;right:14px;z-index:6;background:rgba(27,31,59,.95);border-radius:14px;padding:6px;display:none;box-shadow:0 6px 20px rgba(0,0,0,.4);min-width:170px}
 #menu.on{display:block}
-#menu button{display:block;width:100%;background:none;color:var(--tx);font-weight:500;font-size:16px;text-align:right;padding:12px 14px}
-#ep{position:fixed;inset:0;background:var(--bg);overflow-y:auto;display:none;z-index:8;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 30px}
+#menu button{display:block;width:100%;background:none;color:var(--tx);font-weight:500;font-size:16px;text-align:right;padding:12px 14px;box-shadow:none}
+#ep{position:fixed;inset:0;background:rgba(15,18,38,.96);overflow-y:auto;display:none;z-index:12;padding:20px 14px 30px}
 #ep.on{display:block}
 .ebox{max-width:520px;margin:0 auto;text-align:right}
 .etop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:18px}
 .qc{background:var(--card);border-radius:16px;padding:12px;margin-bottom:12px}
 .qh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.qc textarea{height:auto;width:100%;margin-bottom:8px;font-size:16px}
+.qc textarea{height:auto;width:100%;margin-bottom:8px;font-size:16px;background:#0f1226;color:#fff;border:1px solid var(--mut);border-radius:8px;padding:8px}
 .orow{display:flex;gap:8px;align-items:center;margin:6px 0}
-.orow input[type=text]{flex:1;padding:10px;border-radius:10px;border:1px solid var(--mut);background:var(--bg);color:var(--tx);font:inherit;font-size:16px}
+.orow input[type=text]{flex:1;padding:10px;border-radius:10px;border:1px solid var(--mut);background:#0f1226;color:var(--tx);font:inherit;font-size:15px}
 .orow input[type=radio]{width:22px;height:22px;accent-color:#06d6a0}
-.pwd-input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);background:var(--bg);color:var(--tx);font-size:18px;text-align:center;margin:12px 0}
+.pwd-input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);background:#0f1226;color:var(--tx);font-size:18px;text-align:center;margin:12px 0}
+.hint{font-size:13px;color:var(--mut);margin:6px 0}
 </style>
 </head>
 <body>
-<h1>🎡 عجلة الأسئلة الرياضية العمانية</h1>
-<div class="sub">لف العجلة وجاوب على السؤال اللي يطلع لك</div>
+
 <div class="stage"><div class="ptr"></div><canvas id="c" width="840" height="840"></canvas></div>
-<div class="row"><button id="spin">لف!</button></div>
+<div class="row"><button id="spin">لف العجلة!</button></div>
+
 <button id="mb" aria-label="القائمة">☰</button>
 <div id="menu"><button id="me">✏️ تعديل الأسئلة</button><button id="mr">↺ إعادة اللعب</button></div>
 
-<!-- نافذة أدخال كلمة السر لتعديل الأسئلة -->
+<!-- كلمة السر -->
 <div id="pwdModal">
   <div class="box">
     <h3 style="margin-top:0">🔒 أدخل كلمة السر</h3>
@@ -74,6 +120,7 @@ textarea{width:100%;height:200px;border-radius:12px;border:1px solid var(--mut);
   <div id="el"></div>
   <div class="row"><button class="sec" id="add">＋ إضافة سؤال</button><button id="sv">حفظ</button></div>
 </div></div>
+
 <div id="modal"><div class="box">
   <div class="num" id="n"></div>
   <div id="q"></div>
@@ -81,10 +128,9 @@ textarea{width:100%;height:200px;border-radius:12px;border:1px solid var(--mut);
   <div id="res"></div>
   <div class="row"><button id="ok">التالي ◀</button></div>
 </div></div>
-<script>
-// كلمة السر المعتمدة لتعديل الأسئلة
-const ADMIN_PASSWORD = "37103";
 
+<script>
+const ADMIN_PASSWORD = "37103";
 const COL=["#ff6b6b","#ffd166","#06d6a0","#4cc9f0","#b388ff","#ff9f68","#f72585","#7bd88f"];
 const Q=[
  ["في أي عام تم الإعلان عن تخصيص 26 أكتوبر يوماً للشباب العماني؟",["عام 2013","عام 2012","عام 2014","عام 2015"],0],
@@ -221,12 +267,11 @@ function renderEd(){
       const ti=document.createElement("input");ti.type="text";ti.value=t;ti.placeholder="الخيار "+(j+1);ti.oninput=()=>d.o[j]=ti.value;
       r.append(rd,ti);c.appendChild(r);
     });
-    const h=document.createElement("div");h.className="hint";h.textContent="الدائرة المحددة = الإجابة الصحيحة";c.appendChild(h);
+    const h=document.createElement("div");h.textContent="الدائرة المحددة = الإجابة الصحيحة";c.appendChild(h);
     el.appendChild(c);
   });
 }
 
-// التحكم بنافذة كلمة السر
 const pwdModal = document.getElementById("pwdModal");
 const pwdInput = document.getElementById("pwdInput");
 
